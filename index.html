@@ -957,10 +957,10 @@ p.reveal-text span {
 }
 
 .highlights-section .card-title {
-    font-size: 16px;
+    font-size: 24px;
     font-weight: 600;
-    line-height: 1.45;
-    letter-spacing: -0.01em;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
 }
 
 .highlights-section .card-title span {
@@ -1010,12 +1010,13 @@ p.reveal-text span {
     display: none;
 }
 
+/* Botões do carrossel verdes */
 .nav-arrow {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    border: 1px solid #E0E0E0;
-    background-color: transparent;
+    border: 1px solid #B5D921;
+    background-color: #B5D921;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1023,21 +1024,26 @@ p.reveal-text span {
     text-decoration: none;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 14px rgba(181, 217, 33, 0.3);
 }
 
 .nav-arrow:hover {
-    background-color: #101010;
-    color: #ffffff;
-    border-color: #101010;
+    background-color: #a4c71a;
+    border-color: #a4c71a;
+    color: #101010;
+    transform: scale(1.06);
+    box-shadow: 0 6px 18px rgba(181, 217, 33, 0.45);
 }
 
 .nav-arrow.disabled {
-    opacity: 0.25;
+    opacity: 0.3;
     pointer-events: none;
     cursor: default;
-    background-color: transparent !important;
+    background-color: #B5D921 !important;
     color: #101010 !important;
-    border-color: #E0E0E0 !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    transform: none !important;
 }
 
 /* Esconde todas as setas por padrão, exibindo apenas as do estado ativo */
@@ -6298,7 +6304,7 @@ div.footer-copyright {
                                     <img src="https://raw.githubusercontent.com/thyagoalves/projetor-vision5-smart-lp/main/assets/DestaqueVision5SmartApps.jpg" alt="Bateria e Autonomia" class="card-bg">
                                     <div class="card-overlay"></div>
                                     <div class="card-content">
-                                        <h3 class="card-title">Entretenimento com WhaleTV.&nbsp;<span style="letter-spacing: -0.02em;">Acesse seus aplicativos favoritos e explore uma loja completa de apps, com Netflix, YouTube, Disney+, Apple TV e muito mais, direto no projetor.</span></h3>
+                                        <h3 class="card-title">Entretenimento com WhaleTV.²&nbsp;<span style="letter-spacing: -0.02em;">Acesse seus aplicativos favoritos e explore uma loja completa de apps, com Netflix, YouTube, Disney+, Apple TV e muito mais, direto no projetor.</span></h3>
                                     </div>
                                 </div>
 
@@ -6384,7 +6390,7 @@ div.footer-copyright {
                         <h2 class="motor-title">
                             <img src="https://raw.githubusercontent.com/thyagoalves/projetor-vision5-smart-lp/main/assets/WhaleTV.svg" alt="WhaleTV Logo" class="motor-whale-logo">
                             seus favoritos,<br>
-                            já integrados!
+                            já integrados!²
                         </h2>
                     </div>
 
@@ -6398,7 +6404,7 @@ div.footer-copyright {
                                 <h2 class="video-card-title">
                                     <img src="https://raw.githubusercontent.com/thyagoalves/projetor-vision5-smart-lp/main/assets/WhaleTV.svg" alt="WhaleTV Logo" style="height: clamp(35px, 4.5vw, 55px); width: auto; margin-bottom: 20px; display: block;">
                                     seus favoritos,<br>
-                                    já integrados!
+                                    já integrados!²
                                 </h2>
                             </div>
                             <div class="video-card-bottom">
@@ -6429,7 +6435,7 @@ div.footer-copyright {
 
                             </h2>
                             <hr class="display-split-divider">
-                            <p class="display-split-text">Você não precisa ficar presos a sistemas com apps pré-definidos. De filmes e séries a vídeos e conteúdos online, você tem uma variedade de aplicativos para escolher. Netflix, YouTube, Disney+, Apple TV e muito mais, direto no projetor - você decide.&nbsp;</p>
+                            <p class="display-split-text">Você não precisa ficar preso a sistemas com apps pré-definidos. De filmes e séries a vídeos e conteúdos online, você tem uma variedade de aplicativos para escolher. Netflix, YouTube, Disney+, Apple TV e muito mais, direto no projetor - você decide.&nbsp;</p>
                         </div>
                         <div class="display-split-right">
                             <div class="display-large-card">
@@ -6485,7 +6491,7 @@ div.footer-copyright {
                         </div>
                         <div class="display-split-left">
                             <span class="section-tag">04/conectividade</span>
-                            <h2 class="display-split-title">conectividade total,<br> mesmo sem fios.</h2>
+                            <h2 class="display-split-title">conectividade total,<br> mesmo sem fios.³</h2>
                             <hr class="display-split-divider">
                             <p class="display-split-text">O projetor se conecta ao que você já usa, sem esforço. Com o <b>Wi-Fi</b>, seus apps de streaming abrem direto na tela, sem TV box nem notebook. O <b>Bluetooth </b>leva o som para a caixa ou o fone que você preferir. E com o <b>espelhamento de tela</b>, o que está no seu celular aparece em tela grande, na hora, sem um único cabo.</p>
                         </div>
@@ -6678,7 +6684,7 @@ div.footer-copyright {
                                 <h2 class="proj-card-title">
                                     e falando em grande...<br>
                                     o cinema perfeito,
-                                    do<br> tamanho que você quiser.
+                                    do<br> tamanho que você quiser.¹
                                 </h2>
                             </div>
                             <div class="proj-card-bottom">
@@ -6973,7 +6979,7 @@ div.footer-copyright {
                     <div class="display-split-top" style="margin-bottom: 0;">
                         <div class="display-split-left">
                             <span class="section-tag">07/lâmpada</span>
-                            <h2 class="display-split-title">5000 lúmens. 50 mil horas.<br> zero preocupação.</h2>
+                            <h2 class="display-split-title">5000 lúmens. 50 mil horas.<br> zero preocupação.⁴</h2>
                             <hr class="display-split-divider">
                             <p class="display-split-text">50 mil horas é muito tempo. Assistindo 4 horas por dia, são mais de 34 anos de uso. É uma duração pensada para você nunca precisar se preocupar com ela. E com 5000 lúmens, cada uma dessas horas tem uma imagem brilhante, de dia ou de noite.</p>
                         </div>
@@ -7083,7 +7089,7 @@ div.footer-copyright {
                     <div class="battery-header">
                         <div class="battery-header-left">
                             <span class="section-tag">08/KEYSTONE automático</span>
-                            <h2 class="battery-title">tudo nos eixos.<br> mesmo fora dos eixos.</h2>
+                            <h2 class="battery-title">tudo nos eixos.<br> mesmo fora dos eixos.⁷</h2>
                         </div>
                         <div class="battery-header-right">
                             <p class="battery-desc">Não existe posição errada. Existe projetor que se ajeita sozinho. Com o keystone automático, a imagem se alinha em segundos, do jeito certo, no lugar certo, sem você mexer em nada.</p>
@@ -7374,7 +7380,7 @@ div.footer-copyright {
                     <div class="battery-header" style="margin-bottom: 50px;">
                         <div class="battery-header-left">
                             <span class="section-tag">11/portabilidade</span>
-                            <h2 class="battery-title">em qualquer posição.<br> em qualquer ambiente.</h2>
+                            <h2 class="battery-title">em qualquer posição.<br> em qualquer ambiente.⁵</h2>
                         </div>
                         <div class="battery-header-right">
                             <p class="battery-desc">Use apoiado sobre a mesa, montado em tripé ou fixado no teto com inversão automática de imagem. Leve, versátil e pronto para projetar onde a sua imaginação quiser.</p>
@@ -7472,7 +7478,7 @@ div.footer-copyright {
                             <!-- Card 2: Controle Remoto -->
                             <div class="in-box-card">
                                 <div class="in-box-card-top">
-                                    <h3 class="in-box-card-title">Controle Remoto <span class="in-box-card-qty">&times; 1</span></h3>
+                                    <h3 class="in-box-card-title">Controle Remoto⁶ <span class="in-box-card-qty">&times; 1</span></h3>
                                 </div>
                                 <div class="in-box-card-visual">
                                     <img src="https://raw.githubusercontent.com/thyagoalves/projetor-vision5-smart-lp/main/assets/vision5smartcontrole.png" alt="Controle Remoto" class="in-box-img in-box-img-remote" loading="lazy">
@@ -8164,6 +8170,7 @@ pra qualquer lugar.
 
 </body>
 </html>
+
 
 
 
