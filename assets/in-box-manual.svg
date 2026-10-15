@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" fill="none" stroke="#111111" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="in-box-vector-art">
+    <!-- Back fold left -->
+    <polygon points="44,48 78,34 78,206 44,220" fill="#ffffff" stroke="#111111" />
+    <!-- Back fold right -->
+    <polygon points="122,34 156,48 156,220 122,206" fill="#ffffff" stroke="#111111" />
+    <!-- Front panel center -->
+    <polygon points="78,34 122,34 122,206 78,206" fill="#ffffff" stroke="#111111" />
+    <!-- Crease lines -->
+    <line x1="78" y1="34" x2="78" y2="206" stroke="#111111" stroke-width="2.4" />
+    <line x1="122" y1="34" x2="122" y2="206" stroke="#111111" stroke-width="2.4" />
+</svg>

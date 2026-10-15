@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" fill="none" stroke="#111111" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="in-box-vector-art">
+    <!-- Back pages block -->
+    <path d="M78 44 C96 48 126 44 146 40 L146 202 C126 206 96 202 78 206 L78 44 Z" fill="#ffffff" stroke="#111111" />
+    <!-- Spine on right -->
+    <path d="M146 40 L150 43 L150 205 L146 202" fill="#ffffff" stroke="#111111" />
+    <!-- Front cover opening to left -->
+    <path d="M146 40 C122 38 88 44 62 58 L62 220 C88 206 122 200 146 202 Z" fill="#ffffff" stroke="#111111" />
+</svg>

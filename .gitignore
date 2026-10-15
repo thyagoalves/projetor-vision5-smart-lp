@@ -1,0 +1,10 @@
+raw/
+antigo/
+test_event.html
+test_run.js
+*.aep
+*.psd
+*.tmp
+assets/Vision5SmartApps.mp4
+.DS_Store
+Thumbs.db
