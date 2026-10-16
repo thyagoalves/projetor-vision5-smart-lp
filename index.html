@@ -4360,7 +4360,116 @@ div.video-overlay.desktop-only-sistema {
 }
 
 /* =========================================================
-   LÂMINA 12 — TABELA COMPARATIVA DE MODELOS GET
+   LÂMINA 13 — VISUALIZADOR 3D INTERATIVO
+   ========================================================== */
+
+.viewer-3d-section {
+    width: 100%;
+    background-color: #ffffff;
+    padding: 90px 0 110px;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.viewer-3d-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 48px;
+    gap: 40px;
+}
+
+.viewer-3d-header-left {
+    flex: 1;
+}
+
+.viewer-3d-header-left .section-tag {
+    display: inline-block;
+    margin-bottom: 12px;
+}
+
+.viewer-3d-title {
+    font-family: 'Urbanist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: clamp(32px, 3.8vw, 44px);
+    font-weight: 600;
+    color: #101010;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin: 0;
+}
+
+.viewer-3d-header-right {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.viewer-3d-desc {
+    font-family: 'Urbanist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 18px;
+    line-height: 1.55;
+    color: #555555;
+    max-width: 580px;
+    margin: 0;
+}
+
+.viewer-3d-container {
+    width: 100%;
+    height: 620px;
+    border-radius: 32px;
+    overflow: hidden;
+    background-color: #F8F8F8;
+    position: relative;
+    box-sizing: border-box;
+    box-shadow: none !important;
+    border: 1px solid #EDEDED;
+}
+
+.viewer-3d-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+    background-color: #F8F8F8;
+}
+
+@media (max-width: 768px) {
+    .viewer-3d-section {
+        padding: 60px 0 70px !important;
+    }
+
+    .viewer-3d-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 16px !important;
+        margin-bottom: 28px !important;
+    }
+
+    .viewer-3d-header-right {
+        justify-content: flex-start !important;
+    }
+
+    .viewer-3d-desc {
+        max-width: 100% !important;
+        font-size: 15px !important;
+    }
+
+    .viewer-3d-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        aspect-ratio: 1 / 1 !important;
+        border-radius: 20px !important;
+        box-shadow: none !important;
+    }
+
+    .viewer-3d-iframe {
+        height: 100% !important;
+    }
+}
+
+/* =========================================================
+   LÂMINA 14 — TABELA COMPARATIVA DE MODELOS GET
    ========================================================== */
 
 .chair-compare-section {
@@ -7562,13 +7671,32 @@ div.footer-copyright {
                 </div>
             </section>
 
-            <!-- LÂMINA 13: TABELA COMPARATIVA DE MODELOS GET -->
+            <!-- LÂMINA 13: VISUALIZADOR 3D INTERATIVO -->
+            <section class="viewer-3d-section" id="visualizador-3d">
+                <div class="section-container">
+                    <div class="viewer-3d-header">
+                        <div class="viewer-3d-header-left">
+                            <span class="section-tag">13/visão 3d</span>
+                            <h2 class="viewer-3d-title">explore o Vision 5 Smart<br> em 3D</h2>
+                        </div>
+                        <div class="viewer-3d-header-right">
+                            <p class="viewer-3d-desc">Interaja com o modelo tridimensional em tempo real. Gire em 360°, aproxime e conheça cada curva, lente óptica e conexões do projetor.</p>
+                        </div>
+                    </div>
+
+                    <div class="viewer-3d-container">
+                        <iframe id="viewer-3d-iframe" src="https://thyagoalves.github.io/projetor-vision5-smart-lp/viewer-3d.html" class="viewer-3d-iframe" scrolling="no" allow="vr; xr; accelerometer; gyroscope"></iframe>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LÂMINA 14: TABELA COMPARATIVA DE MODELOS GET -->
             <section class="lamina-7 chair-compare-section">
                 <div class="section-container">
                     <!-- Cabeçalho Principal -->
                     <div class="chair-compare-header">
                         <div class="chair-compare-header-left">
-                            <span class="section-tag">13/comparativo</span>
+                            <span class="section-tag">14/comparativo</span>
                             <h2 class="chair-compare-title">encontre o projetor Vision Get<br> ideal para você</h2>
                         </div>
                         <div class="chair-compare-header-right">
@@ -8166,7 +8294,7 @@ pra qualquer lugar.
         </div>
 
 <!-- VTEX font & icon helper -->
-<img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" alt="" style="display:none;" onerror="(function(){if(!document.getElementById('font-urbanist')){var l=document.createElement('link');l.id='font-urbanist';l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700;800;900&display=swap';document.head.appendChild(l)}if(!document.getElementById('boxicons-css')){var b=document.createElement('link');b.id='boxicons-css';b.rel='stylesheet';b.href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css';document.head.appendChild(b)}})()" />
+<img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" alt="" style="display:none;" onerror="(function(){if(!document.getElementById('font-urbanist')){var l=document.createElement('link');l.id='font-urbanist';l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700;800;900&display=swap';document.head.appendChild(l)}if(!document.getElementById('boxicons-css')){var b=document.createElement('link');b.id='boxicons-css';b.rel='stylesheet';b.href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css';document.head.appendChild(b)}var f=document.getElementById('viewer-3d-iframe');if(f&&(window.location.protocol==='file:'||window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1')){f.src='viewer-3d.html';}})()" />
 
 </body>
 </html>

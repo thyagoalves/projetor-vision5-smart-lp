@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Visualização 3D - Projetor Vision 5 Smart</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #F8F8F8;
+            font-family: 'Urbanist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        #canvas-container {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: grab;
+        }
+
+        #canvas-container:active {
+            cursor: grabbing;
+        }
+
+        /* Top Instruction Badge */
+        .ui-overlay-top {
+            position: absolute;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            pointer-events: none;
+            text-align: center;
+            width: calc(100% - 32px);
+            max-width: 420px;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .instruction-badge {
+            background: #ffffff;
+            border: 1px solid #E5E5EA;
+            padding: 9px 22px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #101010;
+            letter-spacing: 0.3px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            box-shadow: none !important;
+            animation: pulseHint 3s infinite ease-in-out;
+        }
+
+        .instruction-badge svg {
+            color: #101010;
+            flex-shrink: 0;
+        }
+
+        @keyframes pulseHint {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        /* Reset View Button */
+        .control-btn {
+            position: absolute;
+            bottom: 22px;
+            right: 22px;
+            background: #ffffff;
+            border: 1.5px solid #101010;
+            color: #101010;
+            padding: 9px 20px;
+            border-radius: 50px;
+            font-family: 'Urbanist', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            z-index: 10;
+            box-shadow: none !important;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .control-btn:hover {
+            background: #101010;
+            color: #ffffff;
+        }
+
+        .control-btn svg {
+            transition: transform 0.4s ease;
+        }
+
+        .control-btn:hover svg {
+            transform: rotate(-180deg);
+        }
+
+        /* Brand pill bottom-left */
+        .brand-pill {
+            position: absolute;
+            bottom: 24px;
+            left: 22px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #8E8E93;
+            z-index: 10;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .brand-pill::before {
+            content: '';
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background-color: #B5D921;
+            display: inline-block;
+        }
+
+        /* Loading Screen */
+        .loading-overlay {
+            position: absolute;
+            inset: 0;
+            background: #F8F8F8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 30;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-spinner {
+            width: 38px;
+            height: 38px;
+            border: 3px solid rgba(16, 16, 16, 0.08);
+            border-top-color: #101010;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 14px;
+        }
+
+        .loading-text {
+            font-size: 13px;
+            font-weight: 600;
+            color: #666666;
+            letter-spacing: 0.3px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .ui-overlay-top {
+                top: 14px;
+                width: calc(100% - 24px);
+            }
+            .instruction-badge {
+                font-size: 12px;
+                padding: 7px 16px;
+                gap: 7px;
+            }
+            .control-btn {
+                bottom: 14px;
+                right: 14px;
+                padding: 7px 14px;
+                font-size: 10px;
+            }
+            .brand-pill {
+                bottom: 16px;
+                left: 14px;
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="loading" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Carregando visualização 3D...</div>
+    </div>
+
+    <div class="ui-overlay-top" id="instruction-overlay">
+        <div class="instruction-badge">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+                <path d="M2 12h20"></path>
+            </svg>
+            <span>Arraste para girar o Vision 5 Smart em 3D</span>
+        </div>
+    </div>
+
+    <div class="brand-pill">3D Interativo</div>
+
+    <button id="reset-btn" class="control-btn" aria-label="Redefinir Visão">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="1 4 1 10 7 10"></polyline>
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+        </svg>
+        <span>Redefinir Visão</span>
+    </button>
+
+    <div id="canvas-container"></div>
+
+    <!-- Three.js and Loaders -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/environments/RoomEnvironment.js"></script>
+
+    <script>
+        (function() {
+            const container = document.getElementById('canvas-container');
+            const loadingEl = document.getElementById('loading');
+            const loadingText = document.querySelector('.loading-text');
+            const resetBtn = document.getElementById('reset-btn');
+            const instructionOverlay = document.getElementById('instruction-overlay');
+
+            // Initial Camera & Target calibration
+            const INITIAL_CAM_POS = { x: -6.8, y: 4.8, z: -9.8 };
+            const INITIAL_TARGET = { x: 0, y: 1.8, z: 0 };
+
+            // Scene setup
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xF8F8F8);
+
+            // Camera
+            const camera = new THREE.PerspectiveCamera(36, container.clientWidth / container.clientHeight, 0.1, 100);
+            camera.position.set(INITIAL_CAM_POS.x, INITIAL_CAM_POS.y, INITIAL_CAM_POS.z);
+
+            // WebGL Renderer
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.outputEncoding = THREE.sRGBEncoding;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.05;
+            container.appendChild(renderer.domElement);
+
+            // Environment lighting
+            const pmremGenerator = new THREE.PMREMGenerator(renderer);
+            pmremGenerator.compileEquirectangularShader();
+            const roomEnvironment = new THREE.RoomEnvironment();
+            scene.environment = pmremGenerator.fromScene(roomEnvironment, 0.05).texture;
+
+            // Orbit Controls
+            const controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.06;
+            controls.minDistance = 4.5;
+            controls.maxDistance = 20.0;
+            controls.maxPolarAngle = Math.PI / 2 + 0.10; // Don't go below floor
+            controls.minPolarAngle = 0.2;
+            controls.target.set(INITIAL_TARGET.x, INITIAL_TARGET.y, INITIAL_TARGET.z);
+            controls.update();
+
+            // Lighting setup
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.45);
+            scene.add(ambientLight);
+
+            // Key light
+            const keyLight = new THREE.DirectionalLight(0xffffff, 0.85);
+            keyLight.position.set(-8, 12, -8);
+            keyLight.castShadow = true;
+            keyLight.shadow.mapSize.width = 1024;
+            keyLight.shadow.mapSize.height = 1024;
+            keyLight.shadow.camera.near = 0.5;
+            keyLight.shadow.camera.far = 30;
+            keyLight.shadow.bias = -0.0003;
+            keyLight.shadow.radius = 2.5;
+            scene.add(keyLight);
+
+            // Fill light
+            const fillLight = new THREE.DirectionalLight(0xffffff, 0.40);
+            fillLight.position.set(8, 6, 8);
+            scene.add(fillLight);
+
+            // Soft contact shadow on ground
+            function createContactShadowTexture() {
+                const canvas = document.createElement('canvas');
+                canvas.width = 512;
+                canvas.height = 512;
+                const ctx = canvas.getContext('2d');
+                const gradient = ctx.createRadialGradient(256, 256, 0, 256, 256, 256);
+                gradient.addColorStop(0, 'rgba(0, 0, 0, 0.35)');
+                gradient.addColorStop(0.3, 'rgba(0, 0, 0, 0.18)');
+                gradient.addColorStop(0.7, 'rgba(0, 0, 0, 0.04)');
+                gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, 512, 512);
+                return new THREE.CanvasTexture(canvas);
+            }
+
+            const shadowPlaneGeo = new THREE.PlaneGeometry(12, 12);
+            const shadowPlaneMat = new THREE.MeshBasicMaterial({
+                map: createContactShadowTexture(),
+                transparent: true,
+                opacity: 0.9,
+                depthWrite: false
+            });
+            const shadowMesh = new THREE.Mesh(shadowPlaneGeo, shadowPlaneMat);
+            shadowMesh.rotation.x = -Math.PI / 2;
+            shadowMesh.position.set(0, 0.01, 0);
+            scene.add(shadowMesh);
+
+            // Directional shadow receiver plane
+            const floorGeo = new THREE.PlaneGeometry(40, 40);
+            const floorMat = new THREE.ShadowMaterial({ opacity: 0.12 });
+            const floorMesh = new THREE.Mesh(floorGeo, floorMat);
+            floorMesh.rotation.x = -Math.PI / 2;
+            floorMesh.position.y = 0;
+            floorMesh.receiveShadow = true;
+            scene.add(floorMesh);
+
+            // Model Group
+            const modelGroup = new THREE.Group();
+            scene.add(modelGroup);
+
+            // Draco Loader setup
+            const dracoLoader = new THREE.DRACOLoader();
+            dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
+
+            const gltfLoader = new THREE.GLTFLoader();
+            gltfLoader.setDRACOLoader(dracoLoader);
+
+            let autoRotate = true;
+
+            // Sources to try
+            const candidateUrls = [
+                'assets/Vision5Edited.glb',
+                'https://raw.githubusercontent.com/thyagoalves/projetor-vision5-smart-lp/main/assets/Vision5Edited.glb'
+            ];
+
+            let attempt = 0;
+
+            function loadModel(url) {
+                gltfLoader.load(
+                    url,
+                    function(gltf) {
+                        const model = gltf.scene;
+
+                        // Calculate bounding box and scale
+                        const box = new THREE.Box3().setFromObject(model);
+                        const size = box.getSize(new THREE.Vector3());
+                        const center = box.getCenter(new THREE.Vector3());
+                        const maxDim = Math.max(size.x, size.y, size.z);
+
+                        if (maxDim > 0) {
+                            const targetSize = 6.8;
+                            const scale = targetSize / maxDim;
+                            model.scale.set(scale, scale, scale);
+                        }
+
+                        // Recalculate after scaling to ground properly
+                        const scaledBox = new THREE.Box3().setFromObject(model);
+                        const scaledCenter = scaledBox.getCenter(new THREE.Vector3());
+                        const scaledMin = scaledBox.min;
+                        const scaledSize = scaledBox.getSize(new THREE.Vector3());
+
+                        // Position so bottom sits at Y = 0 and centered in X & Z
+                        model.position.x = -scaledCenter.x;
+                        model.position.y = -scaledMin.y;
+                        model.position.z = -scaledCenter.z;
+
+                        // Configure materials and shadows
+                        model.traverse(function(child) {
+                            if (child.isMesh) {
+                                child.castShadow = true;
+                                child.receiveShadow = true;
+                                if (child.material) {
+                                    child.material.envMapIntensity = 1.1;
+                                    child.material.needsUpdate = true;
+                                }
+                            }
+                        });
+
+                        modelGroup.add(model);
+
+                        // Set controls target to model's vertical center
+                        const midY = scaledSize.y * 0.45;
+                        controls.target.set(0, midY, 0);
+                        INITIAL_TARGET.y = midY;
+                        controls.update();
+
+                        // Hide loading overlay with smooth fade
+                        if (loadingEl) {
+                            loadingEl.style.opacity = '0';
+                            setTimeout(function() {
+                                loadingEl.style.display = 'none';
+                            }, 500);
+                        }
+                    },
+                    function(xhr) {
+                        if (xhr.total > 0 && loadingText) {
+                            const percent = Math.min(100, Math.round((xhr.loaded / xhr.total) * 100));
+                            loadingText.textContent = 'Carregando visualização 3D (' + percent + '%)...';
+                        }
+                    },
+                    function(err) {
+                        console.warn('Falha ao carregar do candidato: ' + url, err);
+                        attempt++;
+                        if (attempt < candidateUrls.length) {
+                            loadModel(candidateUrls[attempt]);
+                        } else {
+                            if (loadingText) {
+                                loadingText.textContent = 'Erro ao carregar o modelo 3D. Recarregue a página.';
+                            }
+                        }
+                    }
+                );
+            }
+
+            // Start loading
+            loadModel(candidateUrls[0]);
+
+            // Interaction listeners
+            function pauseAutoRotate() {
+                autoRotate = false;
+            }
+
+            controls.addEventListener('start', pauseAutoRotate);
+
+            // Reset button action
+            if (resetBtn) {
+                resetBtn.addEventListener('click', function() {
+                    camera.position.set(INITIAL_CAM_POS.x, INITIAL_CAM_POS.y, INITIAL_CAM_POS.z);
+                    controls.target.set(INITIAL_TARGET.x, INITIAL_TARGET.y, INITIAL_TARGET.z);
+                    modelGroup.rotation.set(0, 0, 0);
+                    controls.update();
+                    autoRotate = true;
+                });
+            }
+
+            // Hide instruction badge after 6 seconds of user engagement
+            let timer = setTimeout(function() {
+                if (instructionOverlay) {
+                    instructionOverlay.style.opacity = '0';
+                    instructionOverlay.style.transform = 'translateX(-50%) translateY(-10px)';
+                }
+            }, 6000);
+
+            controls.addEventListener('start', function() {
+                clearTimeout(timer);
+                if (instructionOverlay) {
+                    instructionOverlay.style.opacity = '0';
+                    instructionOverlay.style.transform = 'translateX(-50%) translateY(-10px)';
+                }
+            });
+
+            // Animation loop
+            function animate() {
+                requestAnimationFrame(animate);
+
+                if (autoRotate) {
+                    modelGroup.rotation.y += 0.0035;
+                }
+
+                controls.update();
+                renderer.render(scene, camera);
+            }
+
+            animate();
+
+            // Resize handling
+            window.addEventListener('resize', function() {
+                if (!container || !camera || !renderer) return;
+                const width = container.clientWidth;
+                const height = container.clientHeight;
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+                renderer.setSize(width, height);
+            });
+
+        })();
+    </script>
+</body>
+</html>
