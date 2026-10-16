@@ -361,69 +361,91 @@
                 'https://raw.githubusercontent.com/thyagoalves/projetor-vision5-smart-lp/main/assets/Vision5Edited.glb'
             ];
 
-            // Gera textura óptica de alta precisão para a lâmpada/núcleo de projeção
-            function createLensTexture() {
+            // Gera textura de íris óptica e núcleo de projeção de estúdio
+            function createApertureTexture() {
                 const canvas = document.createElement('canvas');
                 canvas.width = 1024;
                 canvas.height = 1024;
                 const ctx = canvas.getContext('2d');
                 const cx = 512, cy = 512;
 
-                // Fundo da câmara escura
-                ctx.fillStyle = '#020509';
+                // Fundo do barril óptico
+                ctx.fillStyle = '#06080e';
                 ctx.fillRect(0, 0, 1024, 1024);
 
-                // Anéis antirreflexo concêntricos do barril interno
-                for (let r = 490; r > 160; r -= 15) {
+                // Ranhuras concêntricas da câmara interna
+                for (let r = 480; r > 180; r -= 16) {
                     ctx.beginPath();
                     ctx.arc(cx, cy, r, 0, Math.PI * 2);
-                    ctx.strokeStyle = 'rgba(18, 38, 64, 0.4)';
-                    ctx.lineWidth = 2.5;
+                    ctx.strokeStyle = 'rgba(28, 42, 62, 0.55)';
+                    ctx.lineWidth = 3;
                     ctx.stroke();
                 }
 
-                // Dispersão óptica esmeralda / safira dicroica (tratamento AR)
-                const haloGrad = ctx.createRadialGradient(cx, cy, 60, cx, cy, 480);
-                haloGrad.addColorStop(0, 'rgba(0, 170, 255, 0.85)');
-                haloGrad.addColorStop(0.35, 'rgba(0, 120, 220, 0.65)');
-                haloGrad.addColorStop(0.65, 'rgba(0, 60, 140, 0.4)');
-                haloGrad.addColorStop(0.85, 'rgba(2, 20, 50, 0.2)');
-                haloGrad.addColorStop(1, 'rgba(2, 5, 9, 0)');
-                ctx.fillStyle = haloGrad;
+                // Diafragma / anel da íris interna
                 ctx.beginPath();
-                ctx.arc(cx, cy, 480, 0, Math.PI * 2);
+                ctx.arc(cx, cy, 300, 0, Math.PI * 2);
+                ctx.fillStyle = '#0a1018';
                 ctx.fill();
-
-                // Anel de transição do elemento óptico intermediário
-                ctx.beginPath();
-                ctx.arc(cx, cy, 275, 0, Math.PI * 2);
-                ctx.strokeStyle = 'rgba(120, 225, 255, 0.65)';
-                ctx.lineWidth = 3.5;
+                ctx.strokeStyle = 'rgba(45, 70, 105, 0.7)';
+                ctx.lineWidth = 4;
                 ctx.stroke();
 
-                // Núcleo de projeção LED 5000 lúmens ativo (luz potente, viva e pura)
-                const coreGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 220);
-                coreGrad.addColorStop(0, '#FFFFFF');
-                coreGrad.addColorStop(0.18, '#F2FAFF');
-                coreGrad.addColorStop(0.42, '#85DCFF');
-                coreGrad.addColorStop(0.70, '#0091FF');
-                coreGrad.addColorStop(0.90, '#0048A0');
-                coreGrad.addColorStop(1, 'rgba(0, 20, 60, 0)');
-                ctx.fillStyle = coreGrad;
+                // Lâminas da íris (abertura circular precisa)
+                ctx.beginPath();
+                ctx.arc(cx, cy, 220, 0, Math.PI * 2);
+                ctx.fillStyle = '#080d14';
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(60, 95, 140, 0.8)';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // Dispersão dicroica (tratamento antirreflexo violeta e esmeralda)
+                const haloGrad = ctx.createRadialGradient(cx, cy, 30, cx, cy, 220);
+                haloGrad.addColorStop(0, 'rgba(0, 180, 255, 0.7)');
+                haloGrad.addColorStop(0.4, 'rgba(0, 110, 210, 0.5)');
+                haloGrad.addColorStop(0.7, 'rgba(30, 45, 100, 0.3)');
+                haloGrad.addColorStop(1, 'rgba(6, 12, 22, 0)');
+                ctx.fillStyle = haloGrad;
                 ctx.beginPath();
                 ctx.arc(cx, cy, 220, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Ponto focal central cristalino ultrabrilhante
-                const spotGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 75);
+                // Núcleo de projeção cristalino (luz de projeção elegante)
+                const coreGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 140);
+                coreGrad.addColorStop(0, '#FFFFFF');
+                coreGrad.addColorStop(0.25, '#E8F6FF');
+                coreGrad.addColorStop(0.55, '#68C4FF');
+                coreGrad.addColorStop(0.85, '#0A4888');
+                coreGrad.addColorStop(1, 'rgba(6, 20, 45, 0)');
+                ctx.fillStyle = coreGrad;
+                ctx.beginPath();
+                ctx.arc(cx, cy, 140, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Ponto focal central brilhante
+                const spotGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 65);
                 spotGrad.addColorStop(0, '#FFFFFF');
-                spotGrad.addColorStop(0.45, 'rgba(255, 255, 255, 0.98)');
-                spotGrad.addColorStop(0.75, 'rgba(215, 245, 255, 0.7)');
-                spotGrad.addColorStop(1, 'rgba(133, 220, 255, 0)');
+                spotGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.95)');
+                spotGrad.addColorStop(0.8, 'rgba(200, 240, 255, 0.6)');
+                spotGrad.addColorStop(1, 'rgba(100, 200, 255, 0)');
                 ctx.fillStyle = spotGrad;
                 ctx.beginPath();
-                ctx.arc(cx, cy, 75, 0, Math.PI * 2);
+                ctx.arc(cx, cy, 65, 0, Math.PI * 2);
                 ctx.fill();
+
+                // Arcos de reflexo dicroico sutil (magenta / esmeralda nas bordas ópticas)
+                ctx.beginPath();
+                ctx.arc(cx, cy, 210, -0.8, 0.6);
+                ctx.strokeStyle = 'rgba(200, 80, 160, 0.45)';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.arc(cx, cy, 210, 2.3, 3.7);
+                ctx.strokeStyle = 'rgba(40, 210, 180, 0.45)';
+                ctx.lineWidth = 3;
+                ctx.stroke();
 
                 const texture = new THREE.CanvasTexture(canvas);
                 texture.encoding = THREE.sRGBEncoding;
@@ -470,56 +492,65 @@
                                 const name = child.name || '';
                                 const matName = (child.material && child.material.name) || '';
 
-                                // 1. Lâmpada de projeção ativa: núcleo óptico iluminado com feixe dicroico e anéis concêntricos
+                                // 1. Ocultar plano horizontal interno
                                 if (name === 'Plane' || matName === 'Material.001') {
-                                    if (!window.__lensTexture) {
-                                        window.__lensTexture = createLensTexture();
-                                    }
-                                    child.material = new THREE.MeshBasicMaterial({
-                                        map: window.__lensTexture,
+                                    child.visible = false;
+                                }
+
+                                // 2. Barril interno: câmara óptica fosca antirreflexo + fundo com íris e núcleo luminoso
+                                else if (name === 'Lente_Barril_Interno') {
+                                    child.material = new THREE.MeshStandardMaterial({
+                                        color: new THREE.Color(0x0a0c10),
+                                        metalness: 0.1,
+                                        roughness: 0.85
+                                    });
+
+                                    // Fundo óptico com íris e luz de projeção
+                                    const backingGeo = new THREE.CircleGeometry(23.5, 48);
+                                    const backingMat = new THREE.MeshBasicMaterial({
+                                        map: createApertureTexture(),
+                                        side: THREE.DoubleSide,
                                         toneMapped: false
                                     });
-                                    child.visible = true;
+                                    const backingMesh = new THREE.Mesh(backingGeo, backingMat);
+                                    backingMesh.position.set(0, 0, -2.5);
+                                    child.add(backingMesh);
                                 }
-                                // 2. Anel intermediário: transformar de vidro transparente em anel de alumínio escuro acetinado
+
+                                // 3. Aro intermediário: anel escuro de alumínio acetinado (não cromado/prata)
                                 else if (name === 'Lente_Aro_Intermediario' || matName === 'AR3DMat Architectural Clear Glass') {
                                     child.material = new THREE.MeshStandardMaterial({
-                                        color: new THREE.Color(0x18181c),
-                                        metalness: 0.88,
-                                        roughness: 0.22,
-                                        envMapIntensity: 1.3
+                                        color: new THREE.Color(0x1a1a1e),
+                                        metalness: 0.45,
+                                        roughness: 0.55,
+                                        envMapIntensity: 0.8
                                     });
                                 }
-                                // 3. Vidro frontal da lente: vidro óptico translúcido com reflexos dinâmicos de estúdio
+
+                                // 4. Vidro frontal da lente: vidro óptico real com transmissão cristalina e reflexos de estúdio
                                 else if (name === 'Lente_Vidro_Frontal' || matName === 'Mat_Lente_Vidro' || name.toLowerCase().includes('vidro')) {
                                     child.material = new THREE.MeshPhysicalMaterial({
-                                        color: new THREE.Color(0x061828),
-                                        transparent: true,
-                                        opacity: 0.42,
-                                        metalness: 0.08,
+                                        color: new THREE.Color(0xffffff),
+                                        transmission: 0.90,
+                                        opacity: 1.0,
+                                        transparent: false,
                                         roughness: 0.02,
+                                        ior: 1.52,
+                                        thickness: 0.35,
                                         clearcoat: 1.0,
                                         clearcoatRoughness: 0.02,
                                         reflectivity: 1.0,
-                                        ior: 1.55,
-                                        envMapIntensity: 2.6
+                                        envMapIntensity: 1.6
                                     });
                                 }
-                                // 4. Barril interno: câmara escura antirreflexo que dá profundidade realista à lente
-                                else if (name === 'Lente_Barril_Interno') {
-                                    child.material = new THREE.MeshStandardMaterial({
-                                        color: new THREE.Color(0x0a0a0c),
-                                        metalness: 0.2,
-                                        roughness: 0.85
-                                    });
-                                }
-                                // 5. Aro externo metálico
+
+                                // 5. Aro externo da lente
                                 else if (name === 'Lente_Aro_Externo') {
                                     child.material = new THREE.MeshStandardMaterial({
-                                        color: new THREE.Color(0x202022),
-                                        metalness: 0.75,
-                                        roughness: 0.35,
-                                        envMapIntensity: 1.1
+                                        color: new THREE.Color(0x141416),
+                                        metalness: 0.35,
+                                        roughness: 0.65,
+                                        envMapIntensity: 0.7
                                     });
                                 }
                                 // Demais materiais da carcaça e componentes
