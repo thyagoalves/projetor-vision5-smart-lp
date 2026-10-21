@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -25,16 +26,26 @@
             -webkit-user-select: none;
         }
 
-        #canvas-container {
+        model-viewer {
             width: 100%;
             height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
+            background-color: #F8F8F8;
+            --poster-color: transparent;
+            --progress-bar-color: transparent;
+            --progress-bar-height: 0px;
+            --progress-mask: transparent;
             cursor: grab;
         }
 
-        #canvas-container:active {
+        model-viewer::part(default-progress-bar) {
+            display: none !important;
+        }
+
+        model-viewer::part(default-progress-mask) {
+            display: none !important;
+        }
+
+        model-viewer:active {
             cursor: grabbing;
         }
 
@@ -67,11 +78,6 @@
             gap: 9px;
             box-shadow: none !important;
             animation: pulseHint 3s infinite ease-in-out;
-        }
-
-        .instruction-badge svg {
-            color: #101010;
-            flex-shrink: 0;
         }
 
         @keyframes pulseHint {
@@ -142,30 +148,36 @@
             display: inline-block;
         }
 
-        /* Loading Screen */
-        .loading-overlay {
+        /* Custom Loading Bar */
+        .progress-bar {
             position: absolute;
-            inset: 0;
-            background: #F8F8F8;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            z-index: 30;
-            transition: opacity 0.5s ease;
+            gap: 14px;
+            z-index: 20;
+            transition: opacity 0.4s ease;
         }
 
-        .loading-spinner {
-            width: 38px;
-            height: 38px;
-            border: 3px solid rgba(16, 16, 16, 0.08);
+        .progress-bar.hide {
+            opacity: 0;
+            pointer-events: none;
+            display: none;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3.5px solid rgba(16, 16, 16, 0.08);
             border-top-color: #101010;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
-            margin-bottom: 14px;
         }
 
-        .loading-text {
+        .progress-text {
             font-size: 13px;
             font-weight: 600;
             color: #666666;
@@ -201,11 +213,6 @@
     </style>
 </head>
 <body>
-    <div id="loading" class="loading-overlay">
-        <div class="loading-spinner"></div>
-        <div class="loading-text">Carregando visualização 3D...</div>
-    </div>
-
     <div class="ui-overlay-top" id="instruction-overlay">
         <div class="instruction-badge">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -227,438 +234,120 @@
         <span>Redefinir Visão</span>
     </button>
 
-    <div id="canvas-container"></div>
+    <div id="progress" class="progress-bar">
+        <div class="spinner"></div>
+        <div id="progress-text" class="progress-text">Carregando visualização 3D...</div>
+    </div>
 
-    <!-- Three.js and Loaders -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/environments/RoomEnvironment.js"></script>
+    <!-- Model Data (0.97 MB embutido, zero CORS, instantâneo) -->
+    <script src="assets/model_data.js"></script>
+    <script>
+        if (!window.VISION5_MODEL_BASE64) {
+            document.write('<script src="model_data.js"><\/script>');
+        }
+    </script>
+
+    <model-viewer
+        id="mv-projector"
+        alt="Projetor Vision 5 Smart"
+        auto-rotate
+        auto-rotate-delay="1500"
+        rotation-per-second="14deg"
+        camera-controls
+        touch-action="pan-y"
+        shadow-intensity="0.75"
+        shadow-softness="0.85"
+        exposure="1.05"
+        environment-image="neutral"
+        tone-mapping="aces"
+        camera-orbit="142deg 75deg 3.6m"
+        min-camera-orbit="auto 20deg 1.8m"
+        max-camera-orbit="auto 95deg 6.0m"
+        field-of-view="30deg">
+        <div slot="progress-bar" style="display: none;"></div>
+    </model-viewer>
 
     <script>
-        (function() {
-            const container = document.getElementById('canvas-container');
-            const loadingEl = document.getElementById('loading');
-            const loadingText = document.querySelector('.loading-text');
-            const resetBtn = document.getElementById('reset-btn');
-            const instructionOverlay = document.getElementById('instruction-overlay');
+        const mv = document.getElementById('mv-projector');
+        if (window.VISION5_MODEL_BASE64) {
+            mv.src = "data:model/gltf-binary;base64," + window.VISION5_MODEL_BASE64;
+        } else {
+            mv.src = (window.location.pathname.indexOf('/assets/') !== -1 || window.location.pathname.indexOf('\\assets\\') !== -1)
+                ? "Vision5EditedV3.glb"
+                : "assets/Vision5EditedV3.glb";
+        }
+        const progressBar = document.getElementById('progress');
+        const progressText = document.getElementById('progress-text');
+        const resetBtn = document.getElementById('reset-btn');
+        const instructionOverlay = document.getElementById('instruction-overlay');
 
-            // Initial Camera & Target calibration
-            const INITIAL_CAM_POS = { x: -6.8, y: 4.8, z: -9.8 };
-            const INITIAL_TARGET = { x: 0, y: 1.8, z: 0 };
+        // Progress listener
+        mv.addEventListener('progress', (e) => {
+            const percent = Math.round(e.detail.totalProgress * 100);
+            if (progressText) {
+                progressText.textContent = 'Carregando visualização 3D (' + percent + '%)...';
+            }
+        });
 
-            // Scene setup
-            const scene = new THREE.Scene();
-            scene.background = new THREE.Color(0xF8F8F8);
-
-            // Camera
-            const camera = new THREE.PerspectiveCamera(36, container.clientWidth / container.clientHeight, 0.1, 100);
-            camera.position.set(INITIAL_CAM_POS.x, INITIAL_CAM_POS.y, INITIAL_CAM_POS.z);
-
-            // WebGL Renderer
-            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
-            renderer.setSize(container.clientWidth, container.clientHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            renderer.shadowMap.enabled = true;
-            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-            renderer.outputEncoding = THREE.sRGBEncoding;
-            renderer.toneMapping = THREE.ACESFilmicToneMapping;
-            renderer.toneMappingExposure = 1.05;
-            container.appendChild(renderer.domElement);
-
-            // Environment lighting
-            const pmremGenerator = new THREE.PMREMGenerator(renderer);
-            pmremGenerator.compileEquirectangularShader();
-            const roomEnvironment = new THREE.RoomEnvironment();
-            scene.environment = pmremGenerator.fromScene(roomEnvironment, 0.05).texture;
-
-            // Orbit Controls
-            const controls = new THREE.OrbitControls(camera, renderer.domElement);
-            controls.enableDamping = true;
-            controls.dampingFactor = 0.06;
-            controls.minDistance = 4.5;
-            controls.maxDistance = 20.0;
-            controls.maxPolarAngle = Math.PI / 2 + 0.10; // Don't go below floor
-            controls.minPolarAngle = 0.2;
-            controls.target.set(INITIAL_TARGET.x, INITIAL_TARGET.y, INITIAL_TARGET.z);
-            controls.update();
-
-            // Lighting setup
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.45);
-            scene.add(ambientLight);
-
-            // Key light
-            const keyLight = new THREE.DirectionalLight(0xffffff, 0.85);
-            keyLight.position.set(-8, 12, -8);
-            keyLight.castShadow = true;
-            keyLight.shadow.mapSize.width = 1024;
-            keyLight.shadow.mapSize.height = 1024;
-            keyLight.shadow.camera.near = 0.5;
-            keyLight.shadow.camera.far = 30;
-            keyLight.shadow.bias = -0.0003;
-            keyLight.shadow.radius = 2.5;
-            scene.add(keyLight);
-
-            // Fill light
-            const fillLight = new THREE.DirectionalLight(0xffffff, 0.40);
-            fillLight.position.set(8, 6, 8);
-            scene.add(fillLight);
-
-            // Soft contact shadow on ground
-            function createContactShadowTexture() {
-                const canvas = document.createElement('canvas');
-                canvas.width = 512;
-                canvas.height = 512;
-                const ctx = canvas.getContext('2d');
-                const gradient = ctx.createRadialGradient(256, 256, 0, 256, 256, 256);
-                gradient.addColorStop(0, 'rgba(0, 0, 0, 0.35)');
-                gradient.addColorStop(0.3, 'rgba(0, 0, 0, 0.18)');
-                gradient.addColorStop(0.7, 'rgba(0, 0, 0, 0.04)');
-                gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-                ctx.fillStyle = gradient;
-                ctx.fillRect(0, 0, 512, 512);
-                return new THREE.CanvasTexture(canvas);
+        // Hide loader when loaded and tune metal materials
+        mv.addEventListener('load', () => {
+            if (progressBar) {
+                progressBar.classList.add('hide');
             }
 
-            const shadowPlaneGeo = new THREE.PlaneGeometry(12, 12);
-            const shadowPlaneMat = new THREE.MeshBasicMaterial({
-                map: createContactShadowTexture(),
-                transparent: true,
-                opacity: 0.9,
-                depthWrite: false
-            });
-            const shadowMesh = new THREE.Mesh(shadowPlaneGeo, shadowPlaneMat);
-            shadowMesh.rotation.x = -Math.PI / 2;
-            shadowMesh.position.set(0, 0.01, 0);
-            scene.add(shadowMesh);
-
-            // Directional shadow receiver plane
-            const floorGeo = new THREE.PlaneGeometry(40, 40);
-            const floorMat = new THREE.ShadowMaterial({ opacity: 0.12 });
-            const floorMesh = new THREE.Mesh(floorGeo, floorMat);
-            floorMesh.rotation.x = -Math.PI / 2;
-            floorMesh.position.y = 0;
-            floorMesh.receiveShadow = true;
-            scene.add(floorMesh);
-
-            // Model Group
-            const modelGroup = new THREE.Group();
-            scene.add(modelGroup);
-
-            // Draco Loader setup
-            const dracoLoader = new THREE.DRACOLoader();
-            dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
-
-            const gltfLoader = new THREE.GLTFLoader();
-            gltfLoader.setDRACOLoader(dracoLoader);
-
-            let autoRotate = true;
-
-            // Sources to try
-            const candidateUrls = [
-                'assets/Vision5Edited.glb',
-                'https://raw.githubusercontent.com/thyagoalves/projetor-vision5-smart-lp/main/assets/Vision5Edited.glb'
-            ];
-
-            // Gera textura de íris óptica e núcleo de projeção de estúdio
-            function createApertureTexture() {
-                const canvas = document.createElement('canvas');
-                canvas.width = 1024;
-                canvas.height = 1024;
-                const ctx = canvas.getContext('2d');
-                const cx = 512, cy = 512;
-
-                // Fundo do barril óptico
-                ctx.fillStyle = '#06080e';
-                ctx.fillRect(0, 0, 1024, 1024);
-
-                // Ranhuras concêntricas da câmara interna
-                for (let r = 480; r > 180; r -= 16) {
-                    ctx.beginPath();
-                    ctx.arc(cx, cy, r, 0, Math.PI * 2);
-                    ctx.strokeStyle = 'rgba(28, 42, 62, 0.55)';
-                    ctx.lineWidth = 3;
-                    ctx.stroke();
-                }
-
-                // Diafragma / anel da íris interna
-                ctx.beginPath();
-                ctx.arc(cx, cy, 300, 0, Math.PI * 2);
-                ctx.fillStyle = '#0a1018';
-                ctx.fill();
-                ctx.strokeStyle = 'rgba(45, 70, 105, 0.7)';
-                ctx.lineWidth = 4;
-                ctx.stroke();
-
-                // Lâminas da íris (abertura circular precisa)
-                ctx.beginPath();
-                ctx.arc(cx, cy, 220, 0, Math.PI * 2);
-                ctx.fillStyle = '#080d14';
-                ctx.fill();
-                ctx.strokeStyle = 'rgba(60, 95, 140, 0.8)';
-                ctx.lineWidth = 3;
-                ctx.stroke();
-
-                // Dispersão dicroica (tratamento antirreflexo violeta e esmeralda)
-                const haloGrad = ctx.createRadialGradient(cx, cy, 30, cx, cy, 220);
-                haloGrad.addColorStop(0, 'rgba(0, 180, 255, 0.7)');
-                haloGrad.addColorStop(0.4, 'rgba(0, 110, 210, 0.5)');
-                haloGrad.addColorStop(0.7, 'rgba(30, 45, 100, 0.3)');
-                haloGrad.addColorStop(1, 'rgba(6, 12, 22, 0)');
-                ctx.fillStyle = haloGrad;
-                ctx.beginPath();
-                ctx.arc(cx, cy, 220, 0, Math.PI * 2);
-                ctx.fill();
-
-                // Núcleo de projeção cristalino (luz de projeção elegante)
-                const coreGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 140);
-                coreGrad.addColorStop(0, '#FFFFFF');
-                coreGrad.addColorStop(0.25, '#E8F6FF');
-                coreGrad.addColorStop(0.55, '#68C4FF');
-                coreGrad.addColorStop(0.85, '#0A4888');
-                coreGrad.addColorStop(1, 'rgba(6, 20, 45, 0)');
-                ctx.fillStyle = coreGrad;
-                ctx.beginPath();
-                ctx.arc(cx, cy, 140, 0, Math.PI * 2);
-                ctx.fill();
-
-                // Ponto focal central brilhante
-                const spotGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 65);
-                spotGrad.addColorStop(0, '#FFFFFF');
-                spotGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.95)');
-                spotGrad.addColorStop(0.8, 'rgba(200, 240, 255, 0.6)');
-                spotGrad.addColorStop(1, 'rgba(100, 200, 255, 0)');
-                ctx.fillStyle = spotGrad;
-                ctx.beginPath();
-                ctx.arc(cx, cy, 65, 0, Math.PI * 2);
-                ctx.fill();
-
-                // Arcos de reflexo dicroico sutil (magenta / esmeralda nas bordas ópticas)
-                ctx.beginPath();
-                ctx.arc(cx, cy, 210, -0.8, 0.6);
-                ctx.strokeStyle = 'rgba(200, 80, 160, 0.45)';
-                ctx.lineWidth = 3;
-                ctx.stroke();
-
-                ctx.beginPath();
-                ctx.arc(cx, cy, 210, 2.3, 3.7);
-                ctx.strokeStyle = 'rgba(40, 210, 180, 0.45)';
-                ctx.lineWidth = 3;
-                ctx.stroke();
-
-                const texture = new THREE.CanvasTexture(canvas);
-                texture.encoding = THREE.sRGBEncoding;
-                return texture;
-            }
-
-            let attempt = 0;
-
-            function loadModel(url) {
-                gltfLoader.load(
-                    url,
-                    function(gltf) {
-                        const model = gltf.scene;
-
-                        // Calculate bounding box and scale
-                        const box = new THREE.Box3().setFromObject(model);
-                        const size = box.getSize(new THREE.Vector3());
-                        const center = box.getCenter(new THREE.Vector3());
-                        const maxDim = Math.max(size.x, size.y, size.z);
-
-                        if (maxDim > 0) {
-                            const targetSize = 6.8;
-                            const scale = targetSize / maxDim;
-                            model.scale.set(scale, scale, scale);
-                        }
-
-                        // Recalculate after scaling to ground properly
-                        const scaledBox = new THREE.Box3().setFromObject(model);
-                        const scaledCenter = scaledBox.getCenter(new THREE.Vector3());
-                        const scaledMin = scaledBox.min;
-                        const scaledSize = scaledBox.getSize(new THREE.Vector3());
-
-                        // Position so bottom sits at Y = 0 and centered in X & Z
-                        model.position.x = -scaledCenter.x;
-                        model.position.y = -scaledMin.y;
-                        model.position.z = -scaledCenter.z;
-
-                        // Configure materials and shadows
-                        model.traverse(function(child) {
-                            if (child.isMesh) {
-                                child.castShadow = true;
-                                child.receiveShadow = true;
-
-                                const name = child.name || '';
-                                const matName = (child.material && child.material.name) || '';
-
-                                // 1. Ocultar plano horizontal interno
-                                if (name === 'Plane' || matName === 'Material.001') {
-                                    child.visible = false;
-                                }
-
-                                // 2. Barril interno: câmara óptica fosca antirreflexo + fundo com íris e núcleo luminoso
-                                else if (name === 'Lente_Barril_Interno') {
-                                    child.material = new THREE.MeshStandardMaterial({
-                                        color: new THREE.Color(0x0a0c10),
-                                        metalness: 0.1,
-                                        roughness: 0.85
-                                    });
-
-                                    // Fundo óptico com íris e luz de projeção
-                                    const backingGeo = new THREE.CircleGeometry(23.5, 48);
-                                    const backingMat = new THREE.MeshBasicMaterial({
-                                        map: createApertureTexture(),
-                                        side: THREE.DoubleSide,
-                                        toneMapped: false
-                                    });
-                                    const backingMesh = new THREE.Mesh(backingGeo, backingMat);
-                                    backingMesh.position.set(0, 0, -2.5);
-                                    child.add(backingMesh);
-                                }
-
-                                // 3. Aro intermediário: anel escuro de alumínio acetinado (não cromado/prata)
-                                else if (name === 'Lente_Aro_Intermediario' || matName === 'AR3DMat Architectural Clear Glass') {
-                                    child.material = new THREE.MeshStandardMaterial({
-                                        color: new THREE.Color(0x1a1a1e),
-                                        metalness: 0.45,
-                                        roughness: 0.55,
-                                        envMapIntensity: 0.8
-                                    });
-                                }
-
-                                // 4. Vidro frontal da lente: vidro óptico real com transmissão cristalina e reflexos de estúdio
-                                else if (name === 'Lente_Vidro_Frontal' || matName === 'Mat_Lente_Vidro' || name.toLowerCase().includes('vidro')) {
-                                    child.material = new THREE.MeshPhysicalMaterial({
-                                        color: new THREE.Color(0xffffff),
-                                        transmission: 0.90,
-                                        opacity: 1.0,
-                                        transparent: false,
-                                        roughness: 0.02,
-                                        ior: 1.52,
-                                        thickness: 0.35,
-                                        clearcoat: 1.0,
-                                        clearcoatRoughness: 0.02,
-                                        reflectivity: 1.0,
-                                        envMapIntensity: 1.6
-                                    });
-                                }
-
-                                // 5. Aro externo da lente
-                                else if (name === 'Lente_Aro_Externo') {
-                                    child.material = new THREE.MeshStandardMaterial({
-                                        color: new THREE.Color(0x141416),
-                                        metalness: 0.35,
-                                        roughness: 0.65,
-                                        envMapIntensity: 0.7
-                                    });
-                                }
-                                // Demais materiais da carcaça e componentes
-                                else if (child.material) {
-                                    child.material.envMapIntensity = 1.1;
-                                    child.material.needsUpdate = true;
-                                }
-                            }
-                        });
-
-                        modelGroup.add(model);
-
-                        // Set controls target to model's vertical center
-                        const midY = scaledSize.y * 0.45;
-                        controls.target.set(0, midY, 0);
-                        INITIAL_TARGET.y = midY;
-                        controls.update();
-
-                        // Hide loading overlay with smooth fade
-                        if (loadingEl) {
-                            loadingEl.style.opacity = '0';
-                            setTimeout(function() {
-                                loadingEl.style.display = 'none';
-                            }, 500);
-                        }
-                    },
-                    function(xhr) {
-                        if (xhr.total > 0 && loadingText) {
-                            const percent = Math.min(100, Math.round((xhr.loaded / xhr.total) * 100));
-                            loadingText.textContent = 'Carregando visualização 3D (' + percent + '%)...';
-                        }
-                    },
-                    function(err) {
-                        console.warn('Falha ao carregar do candidato: ' + url, err);
-                        attempt++;
-                        if (attempt < candidateUrls.length) {
-                            loadModel(candidateUrls[attempt]);
-                        } else {
-                            if (loadingText) {
-                                loadingText.textContent = 'Erro ao carregar o modelo 3D. Recarregue a página.';
-                            }
-                        }
+            // Calibração: carcaça frontal levemente mais clara que o restante do corpo
+            if (mv.model && mv.model.materials) {
+                for (const mat of mv.model.materials) {
+                    if (mat.name === 'Material.003') {
+                        // Carcaça frontal: grafite/titânio levemente mais claro
+                        mat.pbrMetallicRoughness.setBaseColorFactor([0.095, 0.100, 0.112, 1.0]);
+                        mat.pbrMetallicRoughness.setMetallicFactor(0.65);
+                        mat.pbrMetallicRoughness.setRoughnessFactor(0.33);
+                    } else if (mat.name === 'Metallic Grey Car Paint') {
+                        // Restante do corpo: titânio escuro profundo
+                        mat.pbrMetallicRoughness.setBaseColorFactor([0.055, 0.058, 0.065, 1.0]);
+                        mat.pbrMetallicRoughness.setMetallicFactor(0.70);
+                        mat.pbrMetallicRoughness.setRoughnessFactor(0.35);
+                    } else if (mat.name === 'Mat_Base_Inferior') {
+                        mat.pbrMetallicRoughness.setBaseColorFactor([0.045, 0.048, 0.055, 1.0]);
+                        mat.pbrMetallicRoughness.setMetallicFactor(0.55);
+                        mat.pbrMetallicRoughness.setRoughnessFactor(0.40);
+                    } else if (mat.name === 'Mat_Tampa_Superior') {
+                        mat.pbrMetallicRoughness.setBaseColorFactor([0.038, 0.040, 0.045, 1.0]);
+                        mat.pbrMetallicRoughness.setRoughnessFactor(0.36);
+                        mat.pbrMetallicRoughness.setMetallicFactor(0.12);
+                    } else if (mat.name === 'Mat_Lente_Aro') {
+                        mat.pbrMetallicRoughness.setBaseColorFactor([0.22, 0.23, 0.25, 1.0]);
+                        mat.pbrMetallicRoughness.setMetallicFactor(0.85);
+                        mat.pbrMetallicRoughness.setRoughnessFactor(0.22);
                     }
-                );
-            }
-
-            // Start loading
-            loadModel(candidateUrls[0]);
-
-            // Interaction listeners
-            function pauseAutoRotate() {
-                autoRotate = false;
-            }
-
-            controls.addEventListener('start', pauseAutoRotate);
-
-            // Reset button action
-            if (resetBtn) {
-                resetBtn.addEventListener('click', function() {
-                    camera.position.set(INITIAL_CAM_POS.x, INITIAL_CAM_POS.y, INITIAL_CAM_POS.z);
-                    controls.target.set(INITIAL_TARGET.x, INITIAL_TARGET.y, INITIAL_TARGET.z);
-                    modelGroup.rotation.set(0, 0, 0);
-                    controls.update();
-                    autoRotate = true;
-                });
-            }
-
-            // Hide instruction badge after 6 seconds of user engagement
-            let timer = setTimeout(function() {
-                if (instructionOverlay) {
-                    instructionOverlay.style.opacity = '0';
-                    instructionOverlay.style.transform = 'translateX(-50%) translateY(-10px)';
                 }
-            }, 6000);
+            }
+        });
 
-            controls.addEventListener('start', function() {
-                clearTimeout(timer);
-                if (instructionOverlay) {
-                    instructionOverlay.style.opacity = '0';
-                    instructionOverlay.style.transform = 'translateX(-50%) translateY(-10px)';
-                }
+        // Reset button listener
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                mv.cameraOrbit = '142deg 75deg 3.6m';
+                mv.fieldOfView = '30deg';
+                mv.jumpCameraToGoal();
             });
+        }
 
-            // Animation loop
-            function animate() {
-                requestAnimationFrame(animate);
-
-                if (autoRotate) {
-                    modelGroup.rotation.y += 0.0035;
-                }
-
-                controls.update();
-                renderer.render(scene, camera);
+        // Hide instruction on user interaction
+        mv.addEventListener('camera-change', (e) => {
+            if (e.detail.source === 'user-interaction' && instructionOverlay) {
+                instructionOverlay.style.opacity = '0';
+                instructionOverlay.style.transform = 'translateX(-50%) translateY(-10px)';
             }
+        });
 
-            animate();
-
-            // Resize handling
-            window.addEventListener('resize', function() {
-                if (!container || !camera || !renderer) return;
-                const width = container.clientWidth;
-                const height = container.clientHeight;
-                camera.aspect = width / height;
-                camera.updateProjectionMatrix();
-                renderer.setSize(width, height);
-            });
-
-        })();
+        setTimeout(() => {
+            if (instructionOverlay) {
+                instructionOverlay.style.opacity = '0';
+                instructionOverlay.style.transform = 'translateX(-50%) translateY(-10px)';
+            }
+        }, 6000);
     </script>
 </body>
 </html>

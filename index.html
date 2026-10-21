@@ -1499,7 +1499,8 @@ div.video-overlay.desktop-only-sistema {
 .battery-header-right {
     flex: 1;
     display: flex;
-    justify-content: flex-end;
+    flex-direction: column;
+    align-items: flex-end;
 }
 
 .battery-desc {
@@ -2474,8 +2475,15 @@ div.video-overlay.desktop-only-sistema {
     view-timeline-axis: block;
 }
 
+.lamina-lampada-section .display-split-left {
+    position: relative;
+    z-index: 10;
+}
+
 .lamina-lampada-section .display-split-right {
     overflow: visible;
+    position: relative;
+    z-index: 1;
 }
 
 .lamp-frames-wrapper {
@@ -6234,7 +6242,7 @@ div.footer-copyright {
                             <path d="m20.42 6.11-7.97-4c-.28-.14-.62-.14-.9 0l-7.97 4c-.31.15-.51.45-.55.79-.01.11-.96 10.76 8.55 15.01a.98.98 0 0 0 .82 0C21.91 17.66 20.97 7 20.95 6.9a.98.98 0 0 0-.55-.79ZM12 19.9C5.26 16.63 4.94 9.64 5 7.64l7-3.51 7 3.51c.04 1.99-.33 9.02-7 12.26"></path>
                             <path d="m11 12.59-1.29-1.3-1.42 1.42 2.71 2.7 4.71-4.7-1.42-1.42z"></path>
                         </svg>
-                        <span class="apps-balloon-title">Apps Certificados</span>
+                        <span class="apps-balloon-title">Apps Compatíveis</span>
                     </div>
                     
                     <div class="hero-apps-stage">
@@ -6258,9 +6266,9 @@ div.footer-copyright {
                             <img src="https://raw.githubusercontent.com/thyagoalves/projetor-vision5-smart-lp/main/assets/BannerDisneyPlus.jpg" alt="Disney+" class="banner-img">
                         </div>
 
-                        <!-- Card 5: Globoplay -->
+                        <!-- Card 5: HBO Max -->
                         <div class="hero-app-banner card-pos-5">
-                            <img src="https://raw.githubusercontent.com/thyagoalves/projetor-vision5-smart-lp/main/assets/BannerGloboplay.jpg" alt="Globoplay" class="banner-img">
+                            <img src="https://raw.githubusercontent.com/thyagoalves/projetor-vision5-smart-lp/main/assets/BannerHBOMax.jpg" alt="HBO Max" class="banner-img">
                         </div>
                     </div>
                 </div>
@@ -6733,7 +6741,7 @@ div.footer-copyright {
                                     <path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"></path>
                                 </svg>
                             </div>
-                            <h3 class="cinema-spec-title">contraste<br> 2000:1</h3>
+                            <h3 class="cinema-spec-title">contraste<br> 5000:1</h3>
                             <hr class="cinema-spec-divider">
                             <p class="cinema-spec-desc">pretos e brancos com contraste perfeito para maior profundidade de imagem</p>
                         </div>
@@ -7086,13 +7094,13 @@ div.footer-copyright {
             <section class="lamina-5 lamina-lampada-section" id="lamina-lampada" style="background-color: #fcfcfc;">
                 <div class="section-container">
                     <div class="display-split-top" style="margin-bottom: 0;">
-                        <div class="display-split-left">
+                        <div class="display-split-left" style="position: relative; z-index: 10;">
                             <span class="section-tag">07/lâmpada</span>
                             <h2 class="display-split-title">5000 lúmens. 50 mil horas.<br> zero preocupação.⁴</h2>
                             <hr class="display-split-divider">
                             <p class="display-split-text">50 mil horas é muito tempo. Assistindo 4 horas por dia, são mais de 34 anos de uso. É uma duração pensada para você nunca precisar se preocupar com ela. E com 5000 lúmens, cada uma dessas horas tem uma imagem brilhante, de dia ou de noite.</p>
                         </div>
-                        <div class="display-split-right">
+                        <div class="display-split-right" style="position: relative; z-index: 1;">
                             <div class="lamp-frames-wrapper">
                                 <img class="lamp-frame fallback-frame" src="https://raw.githubusercontent.com/thyagoalves/projetor-vision5-smart-lp/main/assets/anim3/lampadaanim_00000.jpg" alt="Projetor Vision5 Smart - Lâmpada 5000 Lúmens - Frame 00">
                                 <img class="lamp-frame" src="https://raw.githubusercontent.com/thyagoalves/projetor-vision5-smart-lp/main/assets/anim3/lampadaanim_00001.jpg" alt="Projetor Vision5 Smart - Lâmpada 5000 Lúmens - Frame 01">
@@ -7201,7 +7209,7 @@ div.footer-copyright {
                             <h2 class="battery-title">tudo nos eixos.<br> mesmo fora dos eixos.⁵</h2>
                         </div>
                         <div class="battery-header-right">
-                            <p class="battery-desc">Não existe posição errada. Existe projetor que se ajeita sozinho. Com o keystone automático, a imagem se alinha em segundos, do jeito certo, no lugar certo, sem você mexer em nada.</p>
+                            <p class="battery-desc">Não existe posição errada. Existe projetor que se ajeita sozinho. Com o keystone automático, a imagem se alinha em segundos, do jeito certo, no lugar certo, sem você mexer em nada.⁵</p>
                         </div>
                     </div>
 
@@ -7284,7 +7292,7 @@ div.footer-copyright {
                             <span class="section-tag">09/FOCO AUTOMÁTICO</span>
                             <h2 class="display-split-title">entrou em foco.<br> sem você pedir.</h2>
                             <hr class="display-split-divider">
-                            <p class="display-split-text">Ligou, está nítido. O foco automático ajusta a imagem sozinho, em poucos segundos, e você começa a assistir sem mexer em nada. Se preferir cuidar de cada detalhe, o ajuste manual deixa o controle na sua mão. Do jeito que você quiser, a imagem fica no ponto.</p>
+                            <p class="display-split-text">Ligou, está nítido. O foco automático ajusta a imagem sozinho, em poucos segundos, e você começa a assistir sem mexer em nada. Se preferir cuidar de cada detalhe, o ajuste manual deixa o controle na sua mão. Do jeito que você quiser, a imagem fica no ponto.⁵</p>
                         </div>
                         <div class="display-split-right">
                             <div class="display-large-card">
@@ -7957,7 +7965,7 @@ div.footer-copyright {
                             <!-- Linha: Ajuste de Foco -->
                             <div class="chair-spec-row">
                                 <div class="spec-label-col">Ajuste de Foco</div>
-                                <div class="spec-val-col col-1"><strong>Sim</strong> (Pelo comando/controle)</div>
+                                <div class="spec-val-col col-1"><strong>Sim</strong> (Automático/Controle)</div>
                                 <div class="spec-val-col col-2">
                                     <span class="val-empty">—</span>
                                     <span class="val-text val-v3smart"><strong>Sim</strong> (Automático / Pelo comando)</span>
@@ -8216,11 +8224,11 @@ div.footer-copyright {
         <footer class="site-footer">
             <div class="section-container">
                 <div class="footer-legal-notes">
-                    <div class="legal-note-item"><span class="legal-note-num">¹</span><span class="legal-note-text">A disponibilidade, o funcionamento e a interface dos aplicativos de streaming e serviços online (como Netflix, YouTube, Prime Video, Disney+, Globoplay, entre outros) estão sujeitos a termos, políticas, compatibilidade e atualizações contínuas de seus respectivos desenvolvedores e provedores de conteúdo, podendo exigir conexão ativa com a internet e assinaturas pagas contratadas separadamente.</span></div>
+                    <div class="legal-note-item"><span class="legal-note-num">¹</span><span class="legal-note-text">A disponibilidade, o funcionamento e a interface dos aplicativos de streaming e serviços online (como Netflix, YouTube, Prime Video, Disney+, HBO Max, entre outros) estão sujeitos a termos, políticas, compatibilidade e atualizações contínuas de seus respectivos desenvolvedores e provedores de conteúdo, podendo exigir conexão ativa com a internet e assinaturas pagas contratadas separadamente.</span></div>
                     <div class="legal-note-item"><span class="legal-note-num">²</span><span class="legal-note-text">As conexões sem fio (Wi-Fi de 2.4 GHz / 5 GHz, Bluetooth e espelhamento de tela via protocolos como Miracast, AirPin, Eshare ou TV Casting) dependem da compatibilidade de hardware e sistema operacional dos dispositivos transmissores (smartphones, tablets, computadores), da versão dos codecs suportados e da estabilidade e velocidade da rede local.</span></div>
                     <div class="legal-note-item"><span class="legal-note-num">³</span><span class="legal-note-text">O tamanho, a proporção e o brilho efetivo da imagem projetada podem variar conforme a distância de posicionamento, o ângulo de projeção, o tipo, textura e cor da superfície ou tela utilizada, bem como as condições de iluminação ambiental do local.</span></div>
                     <div class="legal-note-item"><span class="legal-note-num">⁴</span><span class="legal-note-text">A estimativa de durabilidade de até 50.000 horas para a fonte luminosa LED é baseada em testes laboratoriais sob condições ideais de uso contínuo, temperatura controlada e desobstrução das saídas de ventilação do aparelho. O tempo de vida útil real pode variar de acordo com o modo de brilho selecionado, tempo de operação diária e fatores ambientais.</span></div>
-                    <div class="legal-note-item"><span class="legal-note-num">⁵</span><span class="legal-note-text">O alcance e a eficácia da calibração trapezoidal (keystone) e do foco automático podem variar em ângulos de projeção extremos ou superfícies irregulares, sendo recomendada a projeção frontal perpendicular para obtenção da melhor nitidez e aproveitamento da resolução nativa Full HD.</span></div>
+                    <div class="legal-note-item"><span class="legal-note-num">⁵</span><span class="legal-note-text">O alcance, o alinhamento e a eficácia da calibração trapezoidal (keystone) e do foco automático dependem das condições, distância, angulação e tipo de relevo da superfície de projeção, podendo variar em superfícies irregulares ou ângulos extremos. Recomenda-se a projeção frontal perpendicular para obtenção da melhor nitidez e aproveitamento da resolução nativa Full HD.</span></div>
                     <div class="legal-note-item"><span class="legal-note-num">⁶</span><span class="legal-note-text">A furação inferior com rosca de padrão universal de 1/4" é compatível com a maioria dos tripés e suportes de teto e parede do mercado. Acessórios de suporte, tripés articulados, parafusos e buchas de fixação não acompanham o produto e são comercializados separadamente.</span></div>
                     <div class="legal-note-item"><span class="legal-note-num">⁷</span><span class="legal-note-text">O controle remoto requer 2 pilhas palito (tipo AAA) para funcionamento, as quais não acompanham a embalagem original do produto e devem ser adquiridas separadamente.</span></div>
                     <div class="legal-note-item"><span class="legal-note-num">*</span><span class="legal-note-text">As imagens, vídeos, gráficos e animações exibidos nesta página são meramente ilustrativos e foram produzidos com o auxílio de computação gráfica e inteligência artificial para fins de demonstração visual, podendo apresentar pequenas variações de acabamento, detalhes de textura ou proporção em relação ao produto físico final.</span></div>
@@ -8298,6 +8306,7 @@ pra qualquer lugar.
 
 </body>
 </html>
+
 
 
 
